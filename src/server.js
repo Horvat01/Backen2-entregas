@@ -1,18 +1,12 @@
 import app from './app.js'
-import mongoose from 'mongoose'
+import { env } from './config/env.js'
+import {connectDB} from './config/database.js'
 
-const connectDB = async () => {
-    try {
-        await mongoose.connect('mongodb://localhost:27017/95270')
-        console.log('base de datos conectada')
-    }
-    catch (error) {
-        console.error('Error al conectar mongoDB', error)
-    }
-}
 
-await connectDB()
 
-app.listen(3000, () => {
-    console.log(`Servidor escuchando peticiones en el puerto:3000`)
-})
+await connectDB ()
+
+app.listen ( env.PORT, () => {
+    console.log(`Servidor escuchando peticiones en el Puerto: ${process.env.PORT}`);
+
+});

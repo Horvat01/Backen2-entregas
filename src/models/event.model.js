@@ -1,5 +1,4 @@
 import { Schema, model } from 'mongoose';
-import { title } from 'node:process';
 
 const eventSchema = new Schema({
     title: {
@@ -7,14 +6,15 @@ const eventSchema = new Schema({
         required: [true, 'El titulo del evento es obligatorio'],
         trim: true,
     },
-    destiption: {
+
+    description: {
         type: String,
-        required: [true, 'La descripcion es obligatorio'],
+        required: [true, 'La descripcion es obligatoria'],
         trim: true,
     }
 },
-    {
-        timestamps: true
-    });
+{
+    timestamps: true
+});
 
-export default EventModel = model('events', eventSchema);
+export const EventModel = model('events', eventSchema);
