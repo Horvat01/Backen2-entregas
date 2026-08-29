@@ -10,7 +10,7 @@ app.use(express.json())
 app.use('/api/users', userRoutes)
 app.use('/api/events', eventRoutes)
 
-app.get('/api/health', (res,req) => {
+app.get('/api/health', (req,res) => {
     res.status (200).json({data:"ok"});
 })
 
