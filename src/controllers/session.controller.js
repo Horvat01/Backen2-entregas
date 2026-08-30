@@ -1,4 +1,5 @@
 import UserModel from '../models/user.model.js';
+import { createHash } from '../utils/password.utils.js';
 
 export const register = async (req, res) => {
     try {
@@ -23,15 +24,14 @@ export const register = async (req, res) => {
         }
 
         const newUser = await UserModel.create({
-            first_name,
-            last_name,
+            first_name: first_name,
+            last_name: last_name,
             email: normalizedEmail,
-            password,
+            password: await createHash(password, 10),
             role: 'user'
         });
 
-        const userResponse = newUser.toObject();
-        delete userResponse.password;
+
 
         res.status(201).json({
             message: 'Usuario registrado correctamente',
