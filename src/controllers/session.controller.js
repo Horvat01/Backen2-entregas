@@ -1,5 +1,6 @@
 import UserModel from '../models/user.model.js';
 import { createHash } from '../utils/password.utils.js';
+import { getUserByEmail } from '../services/user.service.js';
 
 export const register = async (req, res) => {
     try {
@@ -14,7 +15,9 @@ export const register = async (req, res) => {
 
         const normalizedEmail = email.toLowerCase().trim();
 
-        const userExists = await UserModel.findOne({ email: normalizedEmail });
+
+        const userExists = await getUserByEmail(normalizedEmail)
+
 
         if (userExists) {
             return res.status(409).json({
@@ -35,9 +38,10 @@ export const register = async (req, res) => {
 
         res.status(201).json({
             message: 'Usuario registrado correctamente',
-            data: {id:newUser._id,
-                 first_name:newUser.first_name,
-                 last_name:newUser.last_name,
+            data: {
+                id: newUser._id,
+                first_name: newUser.first_name,
+                last_name: newUser.last_name,
             }
         });
 
