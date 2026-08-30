@@ -123,79 +123,54 @@ npm start
 ## Estructura de carpetas
 
 ```text
-
 node-backend2/
 
 │
-
 ├── src/
-
-│ │
-
-│ ├── config/
-
-│ │ ├── database.js
-
-│ │ └── env.js
-
-│ │
-
-│ ├── controllers/
-
-│ │ └── event.controllers.js
-
-│ │
-
-│ ├── middlewares/
-
-│ │ └── .gitkeep
-
-│ │
-
-│ ├── models/
-
-│ │ ├── event.model.js
-
-│ │ └── user.model.js
-
-│ │
-
-│ ├── routes/
-
-│ │ ├── event.routes.js
-
-│ │ └── user.routes.js
-
-│ │
-
-│ ├── utils/
-
-│ │ └── .gitkeep
-
-│ │
-
-│ ├── app.js
-
-│ └── server.js
-
+│   │
+│   ├── config/
+│   │   ├── database.js
+│   │   └── env.js
+│   │
+│   ├── controllers/
+│   │   ├── event.controllers.js
+│   │   └── user.controller.js
+│   │
+│   ├── dao/
+│   │   └── user.dao.js
+│   │
+│   ├── middlewares/
+│   │   └── .gitkeep
+│   │
+│   ├── models/
+│   │   ├── event.model.js
+│   │   └── user.model.js
+│   │
+│   ├── repositories/
+│   │   └── user.repository.js
+│   │
+│   ├── routes/
+│   │   ├── event.routes.js
+│   │   └── user.routes.js
+│   │
+│   ├── services/
+│   │   ├── event.service.js
+│   │   └── user.service.js
+│   │
+│   ├── utils/
+│   │   └── bcrypt.js
+│   │
+│   ├── app.js
+│   └── server.js
 │
-
 ├── .env
-
 ├── .env.example
-
 ├── .gitignore
-
 ├── eventos.postman_collection.json
-
 ├── package.json
-
 ├── package-lock.json
-
 └── README.md
-
 ```
-
 ### Descripción de las carpetas
 
 * **`config/`**: contiene la configuración de la aplicación, incluyendo la conexión a MongoDB y las variables de entorno.
