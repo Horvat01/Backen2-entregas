@@ -10,6 +10,23 @@ const userSchema = new Schema({
         type: String,
         required: [true, 'El apellido del usuario es obligatorio'],
         trim: true,
+    },
+    email: {
+        type: String,
+        required: [true, 'El email del usuario es obligatorio'],
+        unique: true,
+        lowercase: true,
+        trim: true,
+    },
+    password: {
+        type: String,
+        required: [true, 'La contraseña del usuario es obligatoria'],
+        trim: true,
+    },
+    role: {
+        type: String,
+        enum: ['admin', 'organizer', 'user'],
+        default: 'user',
     }
 },
     {
@@ -17,4 +34,5 @@ const userSchema = new Schema({
     });
 
 const UserModel = model('users', userSchema);
-export default UserModel
+
+export default UserModel;

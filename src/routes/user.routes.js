@@ -8,16 +8,16 @@ router.get('/', async (req, res) => {
         res.json({ message: await EventModel.find({}) });
     }
     catch (error) {
-        res.status(500).json({ error: 'Error al obtener eventos' });
+        res.status(500).json({ error: 'Error al obtener Usuario' });
     }
 });
 
 router.post('/', async (req, res) => {
     try {
-        res.json({ message: 'Evento creado' });
+        res.json({ message: 'Usuario creado' });
     }
     catch (error) {
-        res.status(500).json({ error: 'Error al crear el evento' });
+        res.status(500).json({ error: 'Error al crear el Usuario' });
     }
 });
 
