@@ -16,7 +16,7 @@ export const current = async (req, res) => {
     try {
         
 
-        return res.status(200).json({ payload: "ok " });
+        return res.status(200).json({ payload: req.user });
     }
 
     catch (error) {

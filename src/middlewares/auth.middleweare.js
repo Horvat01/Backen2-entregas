@@ -21,7 +21,9 @@ export const autMiddleware = async (req, res, next) => {
 
         const payload = JsonWebToken.verify(token, '1234')
 
-        next ()
+        req.user = payload;
+
+        next()
     }
 
     catch (error) {
