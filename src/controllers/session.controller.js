@@ -5,7 +5,6 @@ import { generateToken } from '../utils/jwt.utils.js';
 import { env } from '../config/env.js';
 
 
-
 /**
  * 
  * @param {import('express').Request} req 
@@ -17,8 +16,11 @@ export const current = async (req, res) => {
 
     try {
 
+        return res.status(200).json({
+            status: 'success',
+            payload: req.user
+        });
 
-        return res.status(200).json({ payload: req.user });
     }
 
     catch (error) {
@@ -27,7 +29,8 @@ export const current = async (req, res) => {
             message: 'No autenticado'
         });
     }
-}
+};
+
 
 export const register = async (req, res) => {
     try {
@@ -76,6 +79,7 @@ export const register = async (req, res) => {
     }
 };
 
+
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -103,8 +107,6 @@ export const login = async (req, res) => {
             userExists.password
         );
 
-        // console.log("CONTRASEÑA VALIDA:", validPassword);
-
         if (!validPassword) {
             return res.status(401).json({
                 status: 'error',
@@ -122,13 +124,10 @@ export const login = async (req, res) => {
 
         res.cookie('currentUser', jwtToken, {
             httpOnly: true,
-            maxAge: 60 * 1000,
+            maxAge: 3600000,
             sameSite: 'lax',
-            secure: env.COOKIE_SECURE,
-
-        })
-
-
+            secure: env.NODE_ENV === 'production'
+        });
 
         return res.status(200).json({
             status: 'success',
@@ -142,6 +141,15 @@ export const login = async (req, res) => {
             message: 'Error interno del servidor'
         });
     }
+};
 
 
+export const logout = async (req, res) => {
+
+    res.clearCookie('currentUser');
+
+    return res.status(200).json({
+        status: 'success',
+        message: 'Sesión cerrada'
+    });
 };

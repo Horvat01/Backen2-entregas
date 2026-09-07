@@ -1,4 +1,4 @@
-import JsonWebToken from 'jsonwebtoken';
+import { verifyToken } from '../utils/jwt.utils.js';
 
 /**
  * 
@@ -7,29 +7,29 @@ import JsonWebToken from 'jsonwebtoken';
  * @returns 
 */
 
-export const autMiddleware = async (req, res, next) => {
+export const auth = async (req, res, next) => {
 
     try {
-        const token = req.cookies.currentUser
+        const token = req.cookies.currentUser;
 
         if (!token) {
             return res.status(401).json({
                 status: 'error',
-                message: 'No autenticado - MIDDLEWARE'
-            })
+                message: 'No autenticado'
+            });
         }
 
-        const payload = JsonWebToken.verify(token, '1234')
+        const payload = verifyToken(token);
 
         req.user = payload;
 
-        next()
+        next();
     }
 
     catch (error) {
         return res.status(401).json({
             status: 'error',
-            message: 'No autenticado - MIDDLEWARE'
+            message: 'No autenticado'
         });
     }
-}
+};
