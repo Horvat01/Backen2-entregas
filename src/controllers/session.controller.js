@@ -1,7 +1,9 @@
 import UserModel from '../models/user.model.js';
 import { createHash, isValidPassword } from '../utils/password.utils.js';
 import { getUserByEmail } from '../services/user.service.js';
-import JsonWebToken from 'jsonwebtoken';
+import { generateToken } from '../utils/jwt.utils.js';
+import { env } from '../config/env.js';
+
 
 
 /**
@@ -14,7 +16,7 @@ import JsonWebToken from 'jsonwebtoken';
 export const current = async (req, res) => {
 
     try {
-        
+
 
         return res.status(200).json({ payload: req.user });
     }
@@ -116,14 +118,14 @@ export const login = async (req, res) => {
             role: userExists.role
         };
 
-        const jwtToken = JsonWebToken.sign(tokenUser, '1234', { expiresIn: 60 });
+        const jwtToken = generateToken(tokenUser);
 
         res.cookie('currentUser', jwtToken, {
             httpOnly: true,
             maxAge: 60 * 1000,
             sameSite: 'lax',
-            secure: false,
-            // signed: true
+            secure: env.COOKIE_SECURE,
+
         })
 
 

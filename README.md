@@ -134,12 +134,14 @@ node-backend2/
 │   │
 │   ├── controllers/
 │   │   ├── event.controllers.js
-│   │   └── user.controller.js
+│   │   ├── user.controller.js
+│   │   └── session.controller.js
 │   │
 │   ├── dao/
 │   │   └── user.dao.js
 │   │
 │   ├── middlewares/
+│   │   ├── auth.middleware.js
 │   │   └── .gitkeep
 │   │
 │   ├── models/
@@ -158,7 +160,8 @@ node-backend2/
 │   │   └── user.service.js
 │   │
 │   ├── utils/
-│   │   └── bcrypt.js
+│   │   ├── bcrypt.js
+│   │   └── jwt.utils.js
 │   │
 │   ├── app.js
 │   └── server.js
@@ -170,7 +173,7 @@ node-backend2/
 ├── package.json
 ├── package-lock.json
 └── README.md
-```
+
 ### Descripción de las carpetas
 
 * **`config/`**: contiene la configuración de la aplicación, incluyendo la conexión a MongoDB y las variables de entorno.
