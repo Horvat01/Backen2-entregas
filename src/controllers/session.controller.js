@@ -12,15 +12,28 @@ import JsonWebToken from 'jsonwebtoken';
 */
 
 export const current = async (req, res) => {
-    const token = req.cookies.currentUser
 
-    if (!token) {
+    try {
+        const token = req.cookies.currentUser
+
+        if (!token) {
+            return res.status(401).json({
+                status: 'error',
+                message: 'No autenticado'
+            })
+        }
+
+        const payload = JsonWebToken.verify(token, '1234')
+
+        return res.status(200).json({  payload: payload });
+    }
+
+    catch (error) {
         return res.status(401).json({
             status: 'error',
             message: 'No autenticado'
-        })
+        });
     }
-    return res.status(200).json({ user: token });
 }
 
 export const register = async (req, res) => {
