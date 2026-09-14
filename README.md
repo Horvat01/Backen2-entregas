@@ -122,15 +122,13 @@ npm start
 
 ## Estructura de carpetas
 
-```text
 node-backend2/
-
 │
 ├── src/
-│   │
 │   ├── config/
 │   │   ├── database.js
-│   │   └── env.js
+│   │   ├── env.js
+│   │   └── passport.config.js      
 │   │
 │   ├── controllers/
 │   │   ├── event.controllers.js
@@ -153,7 +151,8 @@ node-backend2/
 │   │
 │   ├── routes/
 │   │   ├── event.routes.js
-│   │   └── user.routes.js
+│   │   ├── user.routes.js
+│   │   └── session.routes.js        
 │   │
 │   ├── services/
 │   │   ├── event.service.js
