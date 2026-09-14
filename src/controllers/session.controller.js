@@ -1,6 +1,5 @@
 import UserModel from '../models/user.model.js';
-import { createHash, isValidPassword } from '../utils/password.utils.js';
-import { getUserByEmail } from '../services/user.service.js';
+import { createHash } from '../utils/password.utils.js';
 import { generateToken } from '../utils/jwt.utils.js';
 import { env } from '../config/env.js';
 
@@ -24,100 +23,62 @@ export const current = async (req, res) => {
     }
 
     catch (error) {
+
         return res.status(401).json({
             status: 'error',
             message: 'No autenticado'
         });
+
     }
+
 };
 
 
 export const register = async (req, res) => {
+
     try {
-        const { first_name, last_name, email, password, role } = req.body;
 
-        if (!first_name || !last_name || !email || !password) {
-            return res.status(400).json({
-                status: 'error',
-                message: 'Todos los campos son obligatorios'
-            });
-        }
-
-        const normalizedEmail = email.toLowerCase().trim();
-
-        const userExists = await getUserByEmail(normalizedEmail);
-
-        if (userExists) {
-            return res.status(409).json({
-                status: 'error',
-                message: 'Ya existe un usuario registrado con el mismo mail'
-            });
-        }
+        const { first_name, last_name, email, password } = req.user;
 
         const newUser = await UserModel.create({
-            first_name: first_name,
-            last_name: last_name,
-            email: normalizedEmail,
+            first_name,
+            last_name,
+            email,
             password: await createHash(password, 10),
             role: 'user'
         });
 
-        res.status(201).json({
+        return res.status(201).json({
+            status: 'success',
             message: 'Usuario registrado correctamente',
             data: {
                 id: newUser._id,
                 first_name: newUser.first_name,
                 last_name: newUser.last_name,
+                email: newUser.email
             }
         });
 
     } catch (error) {
-        res.status(400).json({
-            status: 'Error',
+
+        return res.status(400).json({
+            status: 'error',
             message: error.toString()
         });
+
     }
+
 };
 
 
 export const login = async (req, res) => {
+
     try {
-        const { email, password } = req.body;
-
-        if (!email || !password) {
-            return res.status(400).json({
-                status: 'error',
-                message: 'Email y contraseña son obligatorios'
-            });
-        }
-
-        const normalizedEmail = email.toLowerCase().trim();
-
-        const userExists = await getUserByEmail(normalizedEmail);
-
-        if (!userExists) {
-            return res.status(401).json({
-                status: 'error',
-                message: 'Credenciales invalidas'
-            });
-        }
-
-        const validPassword = await isValidPassword(
-            password,
-            userExists.password
-        );
-
-        if (!validPassword) {
-            return res.status(401).json({
-                status: 'error',
-                message: 'Credenciales invalidas'
-            });
-        }
 
         const tokenUser = {
-            id: userExists._id,
-            email: userExists.email,
-            role: userExists.role
+            id: req.user._id,
+            email: req.user.email,
+            role: req.user.role
         };
 
         const jwtToken = generateToken(tokenUser);
@@ -136,11 +97,14 @@ export const login = async (req, res) => {
         });
 
     } catch (error) {
+
         return res.status(500).json({
             status: 'error',
             message: 'Error interno del servidor'
         });
+
     }
+
 };
 
 
@@ -152,4 +116,5 @@ export const logout = async (req, res) => {
         status: 'success',
         message: 'Sesión cerrada'
     });
+
 };

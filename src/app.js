@@ -1,9 +1,10 @@
 import express from 'express'
 import cookieParser from 'cookie-parser'
-
+import './config/passport.js'
 import userRoutes from './routes/user.routes.js'
 import eventRoutes from './routes/event.routes.js'
 import sessionRoutes from './routes/session.routes.js'
+import { env } from './config/env.js'
 
 import passport from 'passport'
 
@@ -11,9 +12,8 @@ import passport from 'passport'
 const app = express()
 
 app.use(express.json())
-app.use(cookieParser( env.COOKIE_SECRET))
-
-app.use (passport.initialize())
+app.use(cookieParser(env.COOKIE_SECURE))
+app.use(passport.initialize())
 
 app.use('/api/users', userRoutes)
 app.use('/api/events', eventRoutes)

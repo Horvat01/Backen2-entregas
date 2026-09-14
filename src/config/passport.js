@@ -1,13 +1,147 @@
 import passport from "passport";
-import { Strategy as JwtStrategy } from "passport-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
+import { getUserByEmail } from '../services/user.service.js';
+import { isValidPassword } from '../utils/password.utils.js';
+import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
+import { env } from "./env.js";
 
-passport.use('logi', new LocalStrategy({ usernameField: 'email', passwordField: 'password' }),
+passport.use('register', new LocalStrategy(
+    {
+        usernameField: 'email',
+        passwordField: 'password',
+        session: false,
+        passReqToCallback: true
+    },
 
-    async (email, passport, done) => {
+    async (req, email, password, done) => {
 
-     return done ( null ,{"nombre":"pablo"})
+        try {
+
+            const { first_name, last_name } = req.body;
+
+            if (!first_name || !last_name || !email || !password) {
+                return done(null, false, {
+                    message: 'Todos los campos son obligatorios'
+                });
+            }
+
+            const normalizedEmail = email.toLowerCase().trim();
+
+            const userExists = await getUserByEmail(normalizedEmail);
+
+            if (userExists) {
+                return done(null, false, {
+                    message: 'El email ya está registrado'
+                });
+            }
+
+            return done(null, {
+                first_name,
+                last_name,
+                email: normalizedEmail,
+                password
+            });
+
+        } catch (error) {
+
+            return done(error);
+
+        }
 
     }
+));
 
-)
+passport.use('login', new LocalStrategy(
+    {
+        usernameField: 'email',
+        passwordField: 'password',
+        session: false,
+        // passReqToCallback: true
+    },
+
+    async (email, password, done) => {
+
+        try {
+
+            if (!email || !password) {
+                return done(null, false, {
+                    message: 'Email y contraseña son obligatorios'
+                });
+            }
+
+            const normalizedEmail = email.toLowerCase().trim();
+
+            const userExists = await getUserByEmail(normalizedEmail);
+
+            if (!userExists) {
+                return done(null, false, {
+                    message: 'Credenciales invalidas'
+                });
+            }
+
+            const validPassword = await isValidPassword(
+                password,
+                userExists.password
+            );
+
+            if (!validPassword) {
+                return done(null, false, {
+                    message: 'Credenciales invalidas'
+                });
+            }
+
+            return done(null, userExists);
+
+        } catch (error) {
+
+            return done(error);
+
+        }
+
+    }
+));
+
+/**
+ * 
+ * @param {import("express").Request} req 
+ * @returns 
+ */
+
+const cookieExtractor = function (req) {
+
+    let token = null;
+
+    if (req && req.cookies && req.cookies.currentUser) {
+        token = req.cookies.currentUser;
+    }
+
+    return token;
+}
+
+
+
+
+passport.use('current', new JwtStrategy(
+    {
+        jwtFromRequest: cookieExtractor,
+        secretOrKey: env.JWT_SECRET
+    },
+
+    async (jwtPayload, done) => {
+
+        try {
+            const user = await getUserByEmail(jwtPayload.email)
+            if (!user) {
+                return (null, false, { "error": "Ususario incorrecto" })
+
+            }
+            return done(null, user);
+
+        } catch (error) {
+
+            return done(error, false);
+
+        }
+
+    }
+));
