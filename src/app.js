@@ -5,17 +5,22 @@ import userRoutes from './routes/user.routes.js'
 import eventRoutes from './routes/event.routes.js'
 import sessionRoutes from './routes/session.routes.js'
 
+import passport from 'passport'
+
 
 const app = express()
 
 app.use(express.json())
-app.use(cookieParser())
+app.use(cookieParser( env.COOKIE_SECRET))
+
+app.use (passport.initialize())
+
 app.use('/api/users', userRoutes)
 app.use('/api/events', eventRoutes)
 app.use('/api/sessions', sessionRoutes)
 
-app.get('/api/health', (req,res) => {
-    res.status (200).json({data:"ok"});
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ data: "ok" });
 })
 
 export default app
