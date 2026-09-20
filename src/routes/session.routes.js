@@ -4,8 +4,8 @@ import { register, login, current, logout } from "../controllers/session.control
 
 
 const router = Router();
-router.post('/register', register);
+router.post('/register', passport.authenticate('register', { session: false }), register);
 router.post('/login', passport.authenticate('login', { session: false }), login);
 router.post('/logout', logout);
-router.get('/current', passport.authenticate('current', {session:false}), current);
+router.get('/current', passport.authenticate('current', { session: false }), current);
 export default router;

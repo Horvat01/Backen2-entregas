@@ -12,25 +12,22 @@ import { env } from '../config/env.js';
 */
 
 export const current = async (req, res) => {
-
     try {
-
         return res.status(200).json({
             status: 'success',
-            payload: req.user
+            payload: {
+                id: req.user._id,
+                email: req.user.email,
+                role: req.user.role
+            }
         });
 
-    }
-
-    catch (error) {
-
+    } catch (error) {
         return res.status(401).json({
             status: 'error',
             message: 'No autenticado'
         });
-
     }
-
 };
 
 
@@ -72,9 +69,7 @@ export const register = async (req, res) => {
 
 
 export const login = async (req, res) => {
-
     try {
-
         const tokenUser = {
             id: req.user._id,
             email: req.user.email,
@@ -92,29 +87,23 @@ export const login = async (req, res) => {
 
         return res.status(200).json({
             status: 'success',
-            message: 'Login correcto',
-            jwt: jwtToken
+            message: 'Login correcto'
         });
 
     } catch (error) {
-
         return res.status(500).json({
             status: 'error',
             message: 'Error interno del servidor'
         });
-
     }
-
 };
 
 
 export const logout = async (req, res) => {
-
     res.clearCookie('currentUser');
 
     return res.status(200).json({
         status: 'success',
         message: 'Sesión cerrada'
     });
-
 };
