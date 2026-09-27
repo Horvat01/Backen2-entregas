@@ -11,10 +11,18 @@ const eventSchema = new Schema({
         type: String,
         required: [true, 'La descripcion es obligatoria'],
         trim: true,
+
+    },
+
+    organizer: {
+        type: Schema.Types.ObjectId,
+        ref: 'users',
+        required: [true, 'el Organizador es obligatorio']
     }
 },
-{
-    timestamps: true
-});
+
+    {
+        timestamps: true
+    });
 
 export const EventModel = model('events', eventSchema);

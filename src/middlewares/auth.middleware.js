@@ -35,12 +35,30 @@ export const auth = async (req, res, next) => {
 };
 // VALIDAMOS LOS ROLES DE LOS USUARIOS
 
-export const authorizeRole = async (req, res, next) => {
-    try {
-        next()
-    }
+export const authorizeRole = (...allowdRoles) => {
 
-    catch {
-        res.status(500).json({ 'error': error.toString() })
+    return (req, res, next) => {
+
+        try {
+
+            console.log(allowdRoles)
+            if (!allowdRoles.includes(req.user.role)) {
+                return res.status(403).json({ 'message': 'roles insuficientes' })
+            }
+            next()
+        }
+
+        catch {
+            return res.status(500).json({ 'error': error.toString() })
+        }
+    }
+}
+
+export const authorizerEventOwnerOrAdmin = async (req, res, next) => {
+    try {
+
+    }
+    catch (error) {
+        return res.status(500).json({ 'error': error.toString() }) 
     }
 }

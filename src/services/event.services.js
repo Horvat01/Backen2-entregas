@@ -1,12 +1,13 @@
 import { EventModel } from "../models/event.model.js";
 
-export const createEventService = async (title, description) => {
+export const createEventService = async (title, description, organizer) => {
 
     try {
 
         const newEvent = await EventModel.create({
             title: title,
-            description: description
+            description: description,
+            organizer: organizer
 
         });
 

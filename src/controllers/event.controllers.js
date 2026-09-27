@@ -20,9 +20,9 @@ export const createEvent = async (req, res) => {
 
         const { title, description } = req.body
         if (!title || !description) {
-            res.status(400).json({ error: 'Datos de entrada insuficientes' })
+            return res.status(400).json({ error: 'Datos de entrada insuficientes' })
         }
-        const newEvent = await createEventService(title, description);
+        const newEvent = await createEventService(title, description, req.user);
         // const event = await EventModel.create(req.body)
 
         res.status(201).json({
