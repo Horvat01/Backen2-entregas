@@ -1,4 +1,6 @@
 import { EventModel } from "../models/event.model.js"
+import { createEventService } from "../services/event.services.js"
+
 
 export const getEvents = async (req, res) => {
     try {
@@ -15,17 +17,23 @@ export const getEvents = async (req, res) => {
 
 export const createEvent = async (req, res) => {
     try {
-        const event = await EventModel.create(req.body)
+
+        const { title, description } = req.body
+        if (!title || !description) {
+            res.status(400).json({ error: 'Datos de entrada insuficientes' })
+        }
+        const newEvent = await createEventService(title, description);
+        // const event = await EventModel.create(req.body)
 
         res.status(201).json({
-            message: "ok",
-            data: event
+            message: "Evento creado",
+            data: newEvent
         })
     } catch (error) {
         console.error(error)
 
         res.status(500).json({
-            error: error.message
+            error: 'Error al crear el evento'
         })
     }
 }

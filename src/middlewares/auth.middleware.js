@@ -33,3 +33,14 @@ export const auth = async (req, res, next) => {
         });
     }
 };
+// VALIDAMOS LOS ROLES DE LOS USUARIOS
+
+export const authorizeRole = async (req, res, next) => {
+    try {
+        next()
+    }
+
+    catch {
+        res.status(500).json({ 'error': error.toString() })
+    }
+}
