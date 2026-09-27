@@ -17,182 +17,145 @@ La plataforma permite gestionar eventos y usuarios, así como administrar las in
 El sistema permite:
 
 * Crear y consultar eventos.
-
 * Obtener información específica de un evento.
-
+* Modificar eventos según los permisos del usuario.
 * Gestionar usuarios.
-
 * Gestionar las inscripciones de los usuarios a los eventos.
-
+* Implementar autenticación mediante Passport.js y JWT.
+* Implementar autorización mediante roles.
+* Validar la propiedad de los eventos.
 * Almacenar la información utilizando MongoDB.
 
-## Tecnologías
+---
+
+# Tecnologías
 
 * **Node.js** — Entorno de ejecución.
-
 * **Express.js** — Framework para la creación de la API REST.
-
 * **MongoDB** — Base de datos.
-
 * **Mongoose** — ODM para trabajar con MongoDB.
-
 * **JavaScript** — Lenguaje principal.
-
+* **Passport.js** — Sistema de autenticación.
+* **Passport-Local** — Estrategia utilizada para registro e inicio de sesión.
+* **Passport-JWT** — Estrategia utilizada para validar usuarios autenticados mediante JWT.
+* **JSON Web Token (JWT)** — Sistema utilizado para la autenticación.
+* **bcrypt** — Hash y validación de contraseñas.
 * **dotenv** — Manejo de variables de entorno.
-
+* **cookie-parser** — Manejo de cookies.
 * **Git / GitHub** — Control de versiones.
-
 * **Postman** — Herramienta utilizada para probar los endpoints de la API.
 
-## Instalación
+---
 
-Clonar el repositorio:
+# Roles y autorización
 
-```bash
+La plataforma implementa un sistema de autorización basado en tres roles:
 
-git clone https://github.com/Horvat01/Backen2-entregas.git
+* `user`
+* `organizer`
+* `admin`
 
-```
+Cada usuario tiene un rol determinado y las rutas protegidas verifican los permisos antes de permitir realizar determinadas acciones.
 
-Ingresar a la carpeta del proyecto:
+## Roles
 
-```bash
+### User
 
-cd Backen2-entregas
+Es el rol asignado por defecto a los usuarios registrados.
 
-```
+Puede:
 
-Instalar las dependencias:
+* Iniciar sesión.
+* Consultar eventos publicados.
+* Consultar información de los eventos.
 
-```bash
+No puede:
 
-npm install
+* Crear eventos.
+* Modificar eventos.
+* Acceder a rutas administrativas.
 
-```
+### Organizer
 
-## Configuración de variables de entorno
+Es el rol destinado a los usuarios encargados de organizar eventos.
 
-Crear un archivo `.env` en la raíz del proyecto tomando como referencia el archivo `.env.example`.
+Puede:
 
-El archivo `.env.example` incluido en el repositorio contiene las variables necesarias para configurar el proyecto sin exponer información sensible.
+* Iniciar sesión.
+* Consultar eventos.
+* Crear eventos.
+* Modificar sus propios eventos.
+* Gestionar los eventos de los cuales es organizador.
 
-Ejemplo:
+No puede:
 
-```env
+* Modificar eventos pertenecientes a otros organizadores.
+* Acceder a rutas administrativas exclusivas del administrador.
 
-PORT=3000
+### Admin
 
-MONGO_URI=mongodb://localhost:27017/95270
+Es el rol con mayores permisos dentro de la aplicación.
 
-NODE_ENV=development
+Puede:
 
-```
+* Iniciar sesión.
+* Consultar eventos.
+* Crear eventos.
+* Modificar cualquier evento.
+* Gestionar usuarios.
+* Acceder a rutas administrativas.
 
-Las variables permiten configurar el puerto del servidor, la conexión con MongoDB y el entorno de ejecución.
+---
 
-El archivo `.env` no debe subirse al repositorio. Debe estar incluido en `.gitignore`.
+# Matriz de permisos
 
-El archivo `.env.example` sí debe estar incluido en el repositorio, ya que funciona como referencia para configurar las variables de entorno necesarias.
+| Acción                             | `user` | `organizer` | `admin` |
+| :--------------------------------- | :----: | :---------: | :-----: |
+| Consultar eventos publicados       |    ✅   |      ✅      |    ✅    |
+| Crear eventos                      |    ❌   |      ✅      |    ✅    |
+| Modificar/cancelar eventos propios |    ❌   |      ✅      |    ✅    |
+| Modificar cualquier evento         |    ❌   |      ❌      |    ✅    |
+| Ver todos los usuarios             |    ❌   |      ❌      |    ✅    |
 
-## Cómo ejecutar
+---
 
-Para iniciar el servidor en modo desarrollo:
+# Registro de usuarios y roles
 
-```bash
-
-npm run dev
-
-```
-
-El servidor quedará disponible en:
+El modelo `User` contiene un campo `role` con los siguientes valores permitidos:
 
 ```text
-
-http://localhost:3000
-
+user
+organizer
+admin
 ```
 
-Para iniciar el servidor en modo normal:
+El rol por defecto es:
 
-```bash
-
-npm start
-
+```text
+user
 ```
 
-## Estructura de carpetas
+El registro público **no permite que el usuario determine libremente su rol mediante el body**.
 
-node-backend2/
-│
-├── src/
-│   ├── config/
-│   │   ├── database.js
-│   │   ├── env.js
-│   │   └── passport.config.js      
-│   │
-│   ├── controllers/
-│   │   ├── event.controllers.js
-│   │   ├── user.controller.js
-│   │   └── session.controller.js
-│   │
-│   ├── dao/
-│   │   └── user.dao.js
-│   │
-│   ├── middlewares/
-│   │   ├── auth.middleware.js
-│   │   └── .gitkeep
-│   │
-│   ├── models/
-│   │   ├── event.model.js
-│   │   └── user.model.js
-│   │
-│   ├── repositories/
-│   │   └── user.repository.js
-│   │
-│   ├── routes/
-│   │   ├── event.routes.js
-│   │   ├── user.routes.js
-│   │   └── session.routes.js        
-│   │
-│   ├── services/
-│   │   ├── event.service.js
-│   │   └── user.service.js
-│   │
-│   ├── utils/
-│   │   ├── bcrypt.js
-│   │   └── jwt.utils.js
-│   │
-│   ├── app.js
-│   └── server.js
-│
-├── .env
-├── .env.example
-├── .gitignore
-├── eventos.postman_collection.json
-├── package.json
-├── package-lock.json
-└── README.md
+Aunque se envíe un rol en la solicitud de registro, el flujo de registro controla el valor permitido y evita que un usuario pueda registrarse directamente como `admin` u `organizer`.
 
-### Descripción de las carpetas
+Los roles privilegiados deben ser asignados mediante mecanismos administrativos.
 
-* **`config/`**: contiene la configuración de la aplicación, incluyendo la conexión a MongoDB y las variables de entorno.
+---
 
-* **`controllers/`**: contiene la lógica encargada de procesar las solicitudes y generar las respuestas.
+# Autenticación
 
-* **`middlewares/`**: espacio destinado a middlewares personalizados para validaciones, autenticación, manejo de errores, etc.
+La autenticación de la aplicación se implementa utilizando **Passport.js** y **JWT**.
 
-* **`models/`**: contiene los modelos de Mongoose que representan las entidades almacenadas en MongoDB.
+El flujo de autenticación funciona de la siguiente manera:
 
-* **`routes/`**: define las rutas y endpoints disponibles de la API.
-
-* **`utils/`**: contiene funciones y utilidades reutilizables.
-
-* **`app.js`**: configura Express, los middlewares y las rutas principales.
-
-* **`server.js`**: inicia el servidor y establece la conexión con la base de datos.
-
-* **`.env`**: contiene las variables de entorno utilizadas localmente y no debe subirse al repositorio.
-
-* **`.env.example`**: muestra las variables necesarias para configurar el proyecto sin exponer información sensible.
-
-* **`eventos.postman_collection.json`**: colección de Postman para probar los endpoints de la API.
+1. El usuario se registra mediante `/api/sessions/register`.
+2. Passport utiliza la estrategia `register`.
+3. Los datos del usuario son validados.
+4. La contraseña es almacenada utilizando un hash generado con bcrypt.
+5. El usuario inicia sesión mediante `/api/sessions/login`.
+6. Passport utiliza la estrategia `login`.
+7. Se valida el email y la contraseña.
+8. Si las credenciales son correctas, se genera un JWT.
+9. El JWT se almacena en una cookie `HttpOnly`.
+10. Las rutas protegidas validan el

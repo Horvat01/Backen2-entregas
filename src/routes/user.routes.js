@@ -1,24 +1,30 @@
 import { Router } from "express";
-import { EventModel } from "../models/event.model.js";
+import passport from "passport";
+import UserModel from "../models/user.model.js";
+import { authorizeRole } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.get('/', async (req, res) => {
-    try {
-        res.json({ message: await EventModel.find({}) });
-    }
-    catch (error) {
-        res.status(500).json({ error: 'Error al obtener Usuario' });
-    }
-});
+router.get(
+    '/',
+    passport.authenticate('current', { session: false }),
+    authorizeRole('admin'),
+    async (req, res) => {
+        try {
+            const users = await UserModel.find({});
 
-router.post('/', async (req, res) => {
-    try {
-        res.json({ message: 'Usuario creado' });
+            res.status(200).json({
+                status: 'success',
+                payload: users
+            });
+
+        } catch (error) {
+            res.status(500).json({
+                status: 'error',
+                message: 'Error al obtener usuarios'
+            });
+        }
     }
-    catch (error) {
-        res.status(500).json({ error: 'Error al crear el Usuario' });
-    }
-});
+);
 
 export default router;

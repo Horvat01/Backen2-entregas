@@ -1,4 +1,5 @@
 import { verifyToken } from '../utils/jwt.utils.js';
+import { geteventById } from '../services/event.services.js';
 
 /**
  * 
@@ -57,8 +58,23 @@ export const authorizeRole = (...allowdRoles) => {
 export const authorizerEventOwnerOrAdmin = async (req, res, next) => {
     try {
 
+        const { eventId } = req.params
+        const event = await geteventById(eventId)
+
+        if (!event) {
+            return res.status(404).json({ "message": "404" })
+        }
+
+        const isAdmin = req.user.role === 'admin';
+        const isOwner = event.organizer.toString() === req.user.id.toString();
+
+        if (!isAdmin && !isOwner) {
+            return res.status(404).json({ "message": "404" })
+        }
+        req.event = event
+        next()
     }
     catch (error) {
-        return res.status(500).json({ 'error': error.toString() }) 
+        return res.status(500).json({ 'error': error.toString() })
     }
 }

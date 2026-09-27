@@ -18,3 +18,14 @@ export const createEventService = async (title, description, organizer) => {
         throw error
     }
 };
+
+export const geteventById = async (eventId) => {
+    try {
+        const event = await EventModel.findById(eventId)
+
+        return event
+    }
+    catch (error) {
+        throw error
+    }
+}
