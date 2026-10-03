@@ -1,5 +1,5 @@
 import { verifyToken } from '../utils/jwt.utils.js';
-import { geteventById } from '../services/event.services.js';
+import { getEventByIdService } from "../services/event.services.js";
 
 /**
  * 
@@ -59,7 +59,7 @@ export const authorizerEventOwnerOrAdmin = async (req, res, next) => {
     try {
 
         const { eventId } = req.params
-        const event = await geteventById(eventId)
+        const event = await getEventByIdService(eventId)
 
         if (!event) {
             return res.status(404).json({ "message": "404" })

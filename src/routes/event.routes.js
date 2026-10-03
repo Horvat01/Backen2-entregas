@@ -1,12 +1,12 @@
-import { Router } from 'express';
-import { getEvents, createEvent, updateEvent } from '../controllers/event.controllers.js';
-import passport from 'passport';
-import { authorizeRole, authorizerEventOwnerOrAdmin } from '../middlewares/auth.middleware.js';
+import { Router } from "express";
+import { getEvents, getEventsById, createEvent, updateEvent } from "../controllers/event.controllers.js";
+import passport from "passport";
+import { authorizeRole, authorizerEventOwnerOrAdmin } from "../middlewares/auth.middleware.js";
 
-const router = Router()
+const router = Router();
+router.get("/", getEvents);
+router.get("/:eventId", getEventsById);
+router.post("/", passport.authenticate("current", { session: false }), authorizeRole("admin", "organizer"), createEvent);
+router.put("/:eventId", passport.authenticate("current", { session: false }), authorizeRole("admin", "organizer"), authorizerEventOwnerOrAdmin, updateEvent);
 
-router.get('/', getEvents)
-router.post('/', passport.authenticate('current', { session: false }), authorizeRole('admin', 'organizer'), createEvent)
-router.put('/:eventId', passport.authenticate('current', { session: false }), authorizeRole('admin', 'organizer'), authorizerEventOwnerOrAdmin, updateEvent)
-
-export default router
+export default router;
