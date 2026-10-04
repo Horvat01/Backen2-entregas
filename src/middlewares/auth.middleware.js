@@ -1,22 +1,14 @@
-import { verifyToken } from '../utils/jwt.utils.js';
+import { verifyToken } from "../utils/jwt.utils.js";
 import { getEventByIdService } from "../services/event.services.js";
 
-/**
- * 
- * @param {import('express').Request} req 
- * @param {import('express').Response} res 
- * @returns 
-*/
-
 export const auth = async (req, res, next) => {
-
     try {
         const token = req.cookies.currentUser;
 
         if (!token) {
             return res.status(401).json({
-                status: 'error',
-                message: 'No autenticado'
+                status: "error",
+                message: "No autenticado"
             });
         }
 
@@ -25,56 +17,90 @@ export const auth = async (req, res, next) => {
         req.user = payload;
 
         next();
-    }
 
-    catch (error) {
+    } catch (error) {
         return res.status(401).json({
-            status: 'error',
-            message: 'No autenticado'
+            status: "error",
+            message: "No autenticado"
         });
     }
 };
-// VALIDAMOS LOS ROLES DE LOS USUARIOS
 
-export const authorizeRole = (...allowdRoles) => {
+
+/**
+ * Middleware para validar roles
+ */
+export const authorizeRole = (...allowedRoles) => {
 
     return (req, res, next) => {
 
         try {
 
-            console.log(allowdRoles)
-            if (!allowdRoles.includes(req.user.role)) {
-                return res.status(403).json({ 'message': 'roles insuficientes' })
+            if (!req.user) {
+                return res.status(401).json({
+                    message: "No autenticado"
+                });
             }
-            next()
-        }
 
-        catch {
-            return res.status(500).json({ 'error': error.toString() })
-        }
-    }
-}
+            if (!allowedRoles.includes(req.user.role)) {
+                return res.status(403).json({
+                    message: "roles insuficientes"
+                });
+            }
 
+            next();
+
+        } catch (error) {
+
+            return res.status(500).json({
+                error: error.toString()
+            });
+        }
+    };
+};
+
+
+/**
+ * Verifica que el usuario sea:
+ * - el dueño del evento
+ * - o un administrador
+ */
 export const authorizerEventOwnerOrAdmin = async (req, res, next) => {
+
     try {
 
-        const { eventId } = req.params
-        const event = await getEventByIdService(eventId)
+        const { eventId } = req.params;
+
+        const event = await getEventByIdService(eventId);
 
         if (!event) {
-            return res.status(404).json({ "message": "404" })
+            return res.status(404).json({
+                message: "Evento no encontrado"
+            });
         }
 
-        const isAdmin = req.user.role === 'admin';
-        const isOwner = event.organizer.toString() === req.user.id.toString();
+        const isAdmin = req.user.role === "admin";
+
+        const organizerId = event.organizer?.id?.toString();
+
+        const isOwner =
+            organizerId === req.user.id.toString();
 
         if (!isAdmin && !isOwner) {
-            return res.status(404).json({ "message": "404" })
+            return res.status(403).json({
+                message: "No tienes permisos para modificar este evento"
+            });
         }
-        req.event = event
-        next()
+
+        req.event = event;
+
+        next();
+
+    } catch (error) {
+
+        return res.status(500).json({
+            error: error.toString()
+        });
     }
-    catch (error) {
-        return res.status(500).json({ 'error': error.toString() })
-    }
-}
+};
+
