@@ -5,6 +5,8 @@ import userRoutes from './routes/user.routes.js'
 import eventRoutes from './routes/event.routes.js'
 import sessionRoutes from './routes/session.routes.js'
 import { env } from './config/env.js'
+import ticketRoutes from './routes/ticket.routes.js'
+
 
 import passport from 'passport'
 
@@ -18,6 +20,7 @@ app.use(passport.initialize())
 app.use('/api/users', userRoutes)
 app.use('/api/events', eventRoutes)
 app.use('/api/sessions', sessionRoutes)
+app.use('/api/tickets', ticketRoutes)
 
 app.get('/api/health', (req, res) => {
     res.status(200).json({ data: "ok" });
