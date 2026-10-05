@@ -3,11 +3,10 @@ import { createEventService, getEventByIdService, findEventsService, updateEvent
 
 export const getEvents = async (req, res) => {
     try {
-        const { status, category, location, dateFrom, dateTo, page = 1, limit = 10, sort = "date"
-        } = req.query;
+        const { status, category, location, dateFrom, dateTo, page = 1, limit = 10, sort = "date"} = req.query;
 
         const filters = {};
-
+ 
         if (status) {
             filters.status = status;
         }

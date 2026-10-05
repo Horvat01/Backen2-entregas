@@ -1,9 +1,11 @@
 import { createEventRepository, getEventByIdRepository, findEventsRepository, countEventsRepository, updateEventRepository, updateEventStatusRepository } from "../repositories/event.repository.js";
-
+import { enviarMail } from "./mail.service.js";
 
 export const createEventService = async (eventData) => {
     try {
         const { title, description, category, date, location, capacity, price, organizer } = eventData;
+
+         enviarMail("demo@coder.com", "Mail con el evento", "<h1>" + event.title + "</h1>", event.title);
 
         // Validar fecha
         const eventDate = new Date(date);
