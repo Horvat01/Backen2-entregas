@@ -78,12 +78,14 @@ export const authorizerEventOwnerOrAdmin = async (req, res, next) => {
                 message: "Evento no encontrado"
             });
         }
-
         const isAdmin = req.user.role === "admin";
+
+        const isOrganizer = req.user.role === "organizer";
 
         const organizerId = event.organizer?.id?.toString();
 
         const isOwner =
+            isOrganizer &&
             organizerId === req.user.id.toString();
 
         if (!isAdmin && !isOwner) {

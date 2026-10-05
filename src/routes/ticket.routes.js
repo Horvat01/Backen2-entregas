@@ -1,14 +1,15 @@
 import { Router } from "express";
-import { getEvents, getEventsById, createEvent, updateEvent, updateEventStatus } from "../controllers/event.controllers.js";
 import passport from "passport";
-import { authorizeRole, authorizerEventOwnerOrAdmin } from "../middlewares/auth.middleware.js";
-import { createTicket } from "../controllers/ticket.controller.js";
+import { createTicket, getMyTickets, getTicketsByEvent } from "../controllers/ticket.controller.js";
+import { authorizerEventOwnerOrAdmin } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
+router.post("/events/:eventId/tickets", passport.authenticate("current", { session: false }), createTicket);
 
+router.get("/tickets/my-tickets", passport.authenticate("current", { session: false }), getMyTickets);
 
-router.post("/", passport.authenticate("current", { session: false }), createTicket)
+router.get("/events/:eventId/tickets", passport.authenticate("current", { session: false }), authorizerEventOwnerOrAdmin, getTicketsByEvent,);
 
 
 export default router;

@@ -7,12 +7,12 @@ export const ACTIVE_TICKET_STATUSES = ["confirmed", "pending"];
 const ticketSchema = new Schema({
     user: {
         type: Schema.Types.ObjectId,
-        ref: "User",
+        ref: "users",
         required: [true, 'EL usuario del ticket es obligatorio.']
     },
     event: {
         type: Schema.Types.ObjectId,
-        ref: "Event",
+        ref: "events",
         required: [true, 'EL evento del ticket es obligatorio.']
     },
     status: {

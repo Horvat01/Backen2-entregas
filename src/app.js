@@ -20,7 +20,7 @@ app.use(passport.initialize())
 app.use('/api/users', userRoutes)
 app.use('/api/events', eventRoutes)
 app.use('/api/sessions', sessionRoutes)
-app.use('/api/tickets', ticketRoutes)
+app.use('/api', ticketRoutes)
 
 app.get('/api/health', (req, res) => {
     res.status(200).json({ data: "ok" });
