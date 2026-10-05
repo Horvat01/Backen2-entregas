@@ -25,6 +25,7 @@ export const getTicketByIdRepository = (ticketId) => {
 };
 
 export const cancelTicketRepository = (ticketId) => {
+
     return TicketModel.findByIdAndUpdate(
         ticketId,
         {

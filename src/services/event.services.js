@@ -5,7 +5,7 @@ export const createEventService = async (eventData) => {
     try {
         const { title, description, category, date, location, capacity, price, organizer } = eventData;
 
-         enviarMail("demo@coder.com", "Mail con el evento", "<h1>" + event.title + "</h1>", event.title);
+        enviarMail("demo@coder.com", "Mail con el evento", "<h1>" + event.title + "</h1>", event.title);
 
         // Validar fecha
         const eventDate = new Date(date);
@@ -59,12 +59,7 @@ export const getEventByIdService = async (eventId) => {
 };
 
 
-export const findEventsService = async ({
-    filters = {},
-    page = 1,
-    limit = 10,
-    sort = { date: 1 }
-}) => {
+export const findEventsService = async ({ filters = {}, page = 1, limit = 10, sort = { date: 1 } }) => {
     try {
         const skip = (page - 1) * limit;
 
@@ -80,9 +75,7 @@ export const findEventsService = async ({
 
         const totalPages = Math.ceil(total / limit);
 
-        return {
-            data: events, page, limit, total, totalPages
-        };
+        return { data: events, page, limit, total, totalPages };
 
     } catch (error) {
         throw error;
@@ -109,34 +102,22 @@ export const updateEventService = async (eventId, updateData) => {
         if (updateData.date !== undefined) {
             const eventDate = new Date(updateData.date);
 
-            if (isNaN(eventDate.getTime())) {
-                throw new Error("La fecha del evento no es valida");
-            }
+            if (isNaN(eventDate.getTime())) { throw new Error("La fecha del evento no es valida"); }
 
-            if (eventDate < new Date()) {
-                throw new Error(
-                    "No se puede modificar un evento con fecha pasada"
-                );
-            }
+            if (eventDate < new Date()) { throw new Error("No se puede modificar un evento con fecha pasada"); }
 
             updateData.date = eventDate;
         }
 
         // Validar capacidad
-        if (
-            updateData.capacity !== undefined &&
-            updateData.capacity <= 0
-        ) {
+        if (updateData.capacity !== undefined && updateData.capacity <= 0) {
             throw new Error(
                 "La capacidad debe ser mayor a 0"
             );
         }
 
         // Validar precio
-        if (
-            updateData.price !== undefined &&
-            updateData.price < 0
-        ) {
+        if (updateData.price !== undefined && updateData.price < 0) {
             throw new Error(
                 "El precio no puede ser negativo"
             );

@@ -60,11 +60,9 @@ export const authorizeRole = (...allowedRoles) => {
 };
 
 
-/**
- * Verifica que el usuario sea:
- * - el dueño del evento
- * - o un administrador
- */
+
+// Verifica que el usuario sea admin u organaizer
+
 export const authorizerEventOwnerOrAdmin = async (req, res, next) => {
 
     try {

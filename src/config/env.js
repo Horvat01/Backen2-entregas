@@ -9,8 +9,10 @@ export const env = {
     JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN,
     NODE_ENV: process.env.NODE_ENV,
     COOKIE_SECURE: process.env.COOKIE_SECURE === 'true',
-    SMTP_USER: process.env.SMTP_USER,
-    SMTP_PASSWORD: process.env.SMTP_PASSWORD,
-    SMTP_HOST: process.env.SMTP_HOST,
-    SMTP_PORT: process.env.SMTP_PORT,
+
+    MAIL_USER: process.env.MAIL_USER,
+    MAIL_PASS: process.env.MAIL_PASS,
+    MAIL_HOST: process.env.MAIL_HOST,
+    MAIL_PORT: process.env.MAIL_PORT,
+    MAIL_FROM: process.env.MAIL_FROM,
 };

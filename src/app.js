@@ -22,12 +22,8 @@ app.use('/api/events', eventRoutes)
 app.use('/api/sessions', sessionRoutes)
 app.use('/api', ticketRoutes)
 
-app.get('/api/health', (req, res) => {
-    res.status(200).json({ data: "ok" });
-})
+app.get('/api/health', (req, res) => { res.status(200).json({ data: "ok" }); })
 
-app.use((req, res) => {
-    res.status(404).json({ status: 'error', message: 'Ruta no encontrada' });
-});
+app.use((req, res) => { res.status(404).json({ status: 'error', message: 'Ruta no encontrada' }); });
 
 export default app

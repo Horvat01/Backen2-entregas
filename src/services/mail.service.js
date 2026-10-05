@@ -2,19 +2,16 @@ import { transporter } from "../config/mail.js";
 import { env } from "../config/env.js";
 
 export async function enviarMail(to, subject, html, text) {
-
     try {
         await transporter.sendMail({
-            from: env.SMPT_USER,
+            from: env.MAIL_FROM,
             to: to,
             subject: subject,
             html: html,
             text: text
-
         });
-    }
-    catch (error) {
-        throw error
+    } catch (error) {
+        throw error;
     }
 }
 

@@ -1,4 +1,11 @@
-import { createTicketRepository, findActiveTicketsByEventRepository, findTicketsByUserRepository, findTicketsByEventRepository } from "../repositories/ticket.repository.js";
+import {
+    createTicketRepository,
+    findActiveTicketsByEventRepository,
+    findTicketsByUserRepository,
+    findTicketsByEventRepository,
+    getTicketByIdRepository,
+    cancelTicketRepository
+} from "../repositories/ticket.repository.js";
 import { randomBytes } from "crypto";
 import { getEventByIdRepository } from "../repositories/event.repository.js";
 import { enviarMail } from "./mail.service.js";
@@ -12,44 +19,30 @@ export const createTicketService = async ({ eventId, quantity = 1, user }) => {
     // Validar que el evento exista
     const event = await getEventByIdRepository(eventId);
 
-    if (!event) {
-        throw new Error("Evento no encontrado");
-    }
+    if (!event) { throw new Error("Evento no encontrado"); }
 
     // Validar que el evento esté publicado
-    if (event.status !== "published") {
-        throw new Error("El evento no está disponible para inscripciones");
-    }
+    if (event.status !== "published") { throw new Error("El evento no está disponible para inscripciones"); }
 
     // Validar que el evento no haya finalizado
-    if (new Date(event.date) <= new Date()) {
-        throw new Error("El evento ya ha finalizado");
-    }
+    if (new Date(event.date) <= new Date()) { throw new Error("El evento ya ha finalizado"); }
 
     // Validar quantity
-    if (!Number.isInteger(quantity) || quantity <= 0) {
-        throw new Error("La cantidad debe ser un número entero mayor a 0");
-    }
+    if (!Number.isInteger(quantity) || quantity <= 0) { throw new Error("La cantidad debe ser un número entero mayor a 0"); }
 
     // Buscar tickets activos del evento
     const activeTickets = await findActiveTicketsByEventRepository(eventId);
 
     // Verificar que el usuario no tenga ya una inscripción activa
-    const userHasActiveTicket = activeTickets.some(
-        ticket => ticket.user.toString() === user._id.toString()
-    );
+    const userHasActiveTicket = activeTickets.some(ticket => ticket.user.toString() === user._id.toString());
 
-    if (userHasActiveTicket) {
-        throw new Error("El usuario ya tiene una inscripción activa para este evento");
-    }
+    if (userHasActiveTicket) { throw new Error("El usuario ya tiene una inscripción activa para este evento"); }
 
-    // Calcular cantidad de cupos ocupados
+    // Calcular cantidad de cupos 
     const occupiedSeats = activeTickets.reduce(
-        (total, ticket) => total + ticket.quantity,
-        0
-    );
+        (total, ticket) => total + ticket.quantity, 0);
 
-    // Calcular cupos disponibles
+    // Calcular  disponibles
     const availableSeats = event.capacity - occupiedSeats;
 
     // Verificar cupos
@@ -97,4 +90,34 @@ export const getTicketsByEventService = async (eventId) => {
     }
 
     return await findTicketsByEventRepository(eventId);
+};
+
+export const cancelTicketService = async (ticketId, user) => {
+
+    // Buscar el ticket
+    const ticket = await getTicketByIdRepository(ticketId);
+
+    if (!ticket) {
+        throw new Error("Ticket no encontrado");
+    }
+
+    // Verificar que no esté ya cancelado
+    if (ticket.status === "cancelled") {
+        throw new Error("El ticket ya está cancelado");
+    }
+
+    // Verificar si el usuario es administrador
+    const isAdmin = user.role === "admin";
+
+    // Verificar si el usuario es dueño del ticket
+    const isOwner = ticket.user.toString() === user.id.toString();
+
+    if (!isAdmin && !isOwner) {
+        const error = new Error("No tienes permisos para cancelar este ticket");
+        error.statusCode = 403;
+        throw error;
+    }
+
+    // Cancelar el ticket
+    return await cancelTicketRepository(ticketId);
 };

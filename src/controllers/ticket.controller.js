@@ -1,4 +1,9 @@
-import { createTicketService, getMyTicketsService, getTicketsByEventService } from "../services/ticket.service.js";
+import {
+    createTicketService,
+    getMyTicketsService,
+    getTicketsByEventService,
+    cancelTicketService
+} from "../services/ticket.service.js";
 
 export const createTicket = async (req, res) => {
 
@@ -100,6 +105,29 @@ export const getTicketsByEvent = async (req, res) => {
         console.error(error);
 
         return res.status(404).json({
+            status: "error",
+            message: error.message
+        });
+    }
+};
+
+export const cancelTicket = async (req, res) => {
+    try {
+        const ticket = await cancelTicketService(
+            req.params.ticketId,
+            req.user
+        );
+
+        return res.status(200).json({
+            status: "success",
+            message: "Ticket cancelado correctamente",
+            payload: ticket
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        return res.status(error.statusCode || 500).json({
             status: "error",
             message: error.message
         });
