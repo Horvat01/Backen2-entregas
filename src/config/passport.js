@@ -1,8 +1,7 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as JwtStrategy } from "passport-jwt";
-
-import UserModel from "../models/user.model.js";
+import { createUserRepository } from "../repositories/user.repository.js";
 import { getUserByEmail } from "../services/user.service.js";
 import { createHash, isValidPassword } from "../utils/password.utils.js";
 import { env } from "./env.js";
@@ -46,12 +45,12 @@ passport.use('register', new LocalStrategy(
 
 
 
-            const newUser = await UserModel.create({
+            const newUser = await createUserRepository({
                 first_name,
                 last_name,
                 email: normalizedEmail,
                 password: hashedPassword,
-                role: 'user'
+                role: "user"
             });
 
             return done(null, newUser);

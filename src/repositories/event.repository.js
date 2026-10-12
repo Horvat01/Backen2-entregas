@@ -1,102 +1,55 @@
-import { EventDetailDTO } from "../dao/event-detail.dto.js";
-import { EventModel } from "../models/event.model.js";
+import { EventDTO } from "../dto/event.dto.js";
+import {
+    createEventDAO,
+    findEventByIdDAO,
+    findEventsDAO,
+    countEventsDAO,
+    updateEventDAO,
+    updateEventStatusDAO
+} from "../dao/event.dao.js";
 
 export const createEventRepository = async (eventData) => {
-    try {
-        const newEvent = await EventModel.create(eventData);
+    const newEvent = await createEventDAO(eventData);
 
-        return new EventDetailDTO(newEvent);
-    } catch (error) {
-        throw error;
-    }
+    return new EventDTO(newEvent);
 };
 
 export const getEventByIdRepository = async (eventId) => {
-    try {
-        const event = await EventModel
-            .findById(eventId)
-            .populate("organizer");
+    const event = await findEventByIdDAO(eventId);
 
-        if (!event) {
-            return null;
-        }
-
-        return new EventDetailDTO(event);
-    } catch (error) {
-        throw error;
+    if (!event) {
+        return null;
     }
+
+    return new EventDTO(event);
 };
 
-export const findEventsRepository = async (
-    filters,
-    sort,
-    skip,
-    limit
-) => {
-    try {
-        const events = await EventModel
-            .find(filters)
-            .populate("organizer")
-            .sort(sort)
-            .skip(skip)
-            .limit(limit);
+export const findEventsRepository = async (filters, sort, skip, limit) => {
+    const events = await findEventsDAO(filters, sort, skip, limit);
 
-        return events.map(event => new EventDetailDTO(event));
-    } catch (error) {
-        throw error;
-    }
+    return events.map(event => new EventDTO(event));
 };
 
 export const countEventsRepository = async (filters) => {
-    try {
-        return await EventModel.countDocuments(filters);
-    } catch (error) {
-        throw error;
-    }
+    return await countEventsDAO(filters);
 };
 
 export const updateEventRepository = async (eventId, updateData) => {
-    try {
-        const event = await EventModel
-            .findByIdAndUpdate(
-                eventId,
-                updateData,
-                {
-                    new: true,
-                    runValidators: true
-                }
-            )
-            .populate("organizer");
+    const event = await updateEventDAO(eventId, updateData);
 
-        if (!event) {
-            return null;
-        }
-
-        return new EventDetailDTO(event);
-    } catch (error) {
-        throw error;
+    if (!event) {
+        return null;
     }
+
+    return new EventDTO(event);
 };
 
 export const updateEventStatusRepository = async (eventId, status) => {
-    try {
-        const event = await EventModel
-            .findByIdAndUpdate(
-                eventId,
-                { status },
-                {
-                    new: true,
-                    runValidators: true
-                }
-            )
-            .populate("organizer");
+    const event = await updateEventStatusDAO(eventId, status);
 
-        if (!event) {
-            return null;
-        }
-
-        return new EventDetailDTO(event);
-    } catch (error) {
-        throw error;
+    if (!event) {
+        return null;
     }
+
+    return new EventDTO(event);
 };

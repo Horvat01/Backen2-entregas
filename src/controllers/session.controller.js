@@ -1,7 +1,9 @@
-import UserModel from '../models/user.model.js';
+// import UserModel from '../models/user.model.js';
 import { createHash } from '../utils/password.utils.js';
 import { generateToken } from '../utils/jwt.utils.js';
 import { env } from '../config/env.js';
+import { createUserRepository } from '../repositories/user.repository.js';
+import { UserDTO } from '../dto/users.dto.js';
 
 
 /**
@@ -32,12 +34,10 @@ export const current = async (req, res) => {
 
 
 export const register = async (req, res) => {
-
     try {
-
         const { first_name, last_name, email, password } = req.user;
 
-        const newUser = await UserModel.create({
+        const newUser = await createUserRepository({
             first_name,
             last_name,
             email,
@@ -48,23 +48,21 @@ export const register = async (req, res) => {
         return res.status(201).json({
             status: 'success',
             message: 'Usuario registrado correctamente',
-            data: {
-                id: newUser._id,
-                first_name: newUser.first_name,
-                last_name: newUser.last_name,
-                email: newUser.email
-            }
+            data: new UserDTO(newUser)
         });
-
     } catch (error) {
+        if (error.code === 11000) {
+            return res.status(409).json({
+                status: 'error',
+                message: 'El email ya está registrado'
+            });
+        }
 
         return res.status(400).json({
             status: 'error',
-            message: error.toString()
+            message: error.message
         });
-
     }
-
 };
 
 

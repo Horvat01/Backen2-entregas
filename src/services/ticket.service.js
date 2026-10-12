@@ -1,11 +1,4 @@
-import {
-    createTicketRepository,
-    findActiveTicketsByEventRepository,
-    findTicketsByUserRepository,
-    findTicketsByEventRepository,
-    getTicketByIdRepository,
-    cancelTicketRepository
-} from "../repositories/ticket.repository.js";
+import { createTicketRepository, findActiveTicketsByEventRepository, findTicketsByUserRepository, findTicketsByEventRepository, getTicketByIdRepository, cancelTicketRepository } from "../repositories/ticket.repository.js";
 import { randomBytes } from "crypto";
 import { getEventByIdRepository } from "../repositories/event.repository.js";
 import { enviarMail } from "./mail.service.js";
@@ -30,13 +23,18 @@ export const createTicketService = async ({ eventId, quantity = 1, user }) => {
     // Validar quantity
     if (!Number.isInteger(quantity) || quantity <= 0) { throw new Error("La cantidad debe ser un número entero mayor a 0"); }
 
-    // Buscar tickets activos del evento
+
     const activeTickets = await findActiveTicketsByEventRepository(eventId);
 
-    // Verificar que el usuario no tenga ya una inscripción activa
-    const userHasActiveTicket = activeTickets.some(ticket => ticket.user.toString() === user._id.toString());
+    const currentUserId = (user.id ?? user._id)?.toString();
 
-    if (userHasActiveTicket) { throw new Error("El usuario ya tiene una inscripción activa para este evento"); }
+    const userHasActiveTicket = activeTickets.some(
+        ticket => ticket.user?.toString() === currentUserId
+    );
+
+    if (userHasActiveTicket) {
+        throw new Error("El usuario ya tiene una inscripción activa para este evento");
+    }
 
     // Calcular cantidad de cupos 
     const occupiedSeats = activeTickets.reduce(
@@ -110,7 +108,9 @@ export const cancelTicketService = async (ticketId, user) => {
     const isAdmin = user.role === "admin";
 
     // Verificar si el usuario es dueño del ticket
-    const isOwner = ticket.user.toString() === user.id.toString();
+    const ticketUserId = ticket.user?.id ?? ticket.user?._id ?? ticket.user;
+    const currentUserId = user.id ?? user._id;
+    const isOwner = ticketUserId?.toString() === currentUserId?.toString();
 
     if (!isAdmin && !isOwner) {
         const error = new Error("No tienes permisos para cancelar este ticket");

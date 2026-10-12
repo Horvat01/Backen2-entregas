@@ -1,27 +1,26 @@
 import { Router } from "express";
 import passport from "passport";
-import UserModel from "../models/user.model.js";
 import { authorizeRole } from "../middlewares/auth.middleware.js";
+import { findAllUsersRepository } from "../repositories/user.repository.js";
 
 const router = Router();
 
 router.get(
-    '/',
-    passport.authenticate('current', { session: false }),
-    authorizeRole('admin'),
+    "/",
+    passport.authenticate("current", { session: false }),
+    authorizeRole("admin"),
     async (req, res) => {
         try {
-            const users = await UserModel.find({});
+            const users = await findAllUsersRepository();
 
-            res.status(200).json({
-                status: 'success',
+            return res.status(200).json({
+                status: "success",
                 payload: users
             });
-
         } catch (error) {
-            res.status(500).json({
-                status: 'error',
-                message: 'Error al obtener usuarios'
+            return res.status(500).json({
+                status: "error",
+                message: "Error al obtener usuarios"
             });
         }
     }

@@ -1,4 +1,4 @@
-export class EventDetailDTO {
+export class EventDTO {
     constructor(event) {
         this.id = event._id;
         this.title = event.title;
@@ -18,4 +18,3 @@ export class EventDetailDTO {
         };
     }
 }
-

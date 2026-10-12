@@ -1,26 +1,30 @@
-import UserModel from "../models/user.model.js";
+
 import { isValidPassword } from "../utils/password.utils.js";
+import { findUserByEmailRepository } from "../repositories/user.repository.js";
 
-export const getUserByEmail = async email => {
-    return await UserModel.findOne({ email })
-}
+export const getUserByEmail = async (email) => {
+    return findUserByEmailRepository(email.toLowerCase().trim());
+};
 
-// @desctiption
-// @param {*} email
-// @returns
 export const validateLogin = async (email, password) => {
-    const user = await getUserByEmail(email)
+    const user = await getUserByEmail(email);
+
     if (!user) {
         return null;
     }
 
-    const validatePassword = await isValidPassword(password, user.password)
-    if (!validatePassword) {
+    const validPassword = await isValidPassword(
+        password,
+        user.password
+    );
+
+    if (!validPassword) {
         return null;
     }
-    return ({
-        id: user._id,
+
+    return {
+        id: user._id.toString(),
         email: user.email,
         role: user.role
-    })
+    };
 };

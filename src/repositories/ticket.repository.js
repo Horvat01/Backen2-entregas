@@ -1,45 +1,36 @@
-import { TicketModel } from "../models/ticket.model.js";
+import { createTicketDAO, findActiveTicketsByEventDAO, findTicketsByUserDAO, findTicketByIdDAO, findTicketsByEventDAO, countActiveTicketsByEventDAO, cancelTicketDAO } from "../dao/ticket.dao.js";
 
-export const createTicketRepository = (data) => {
-    return TicketModel.create(data);
+import { TicketDTO } from "../dto/ticket.dto.js";
+
+export const createTicketRepository = async (data) => {
+    const ticket = await createTicketDAO(data);
+    return new TicketDTO(ticket);
 };
 
 export const findActiveTicketsByEventRepository = (eventId) => {
-    return TicketModel.find({
-        event: eventId,
-        status: {
-            $in: ["confirmed", "pending"]
-        }
-    });
+    return findActiveTicketsByEventDAO(eventId);
 };
 
-export const findTicketsByUserRepository = (userId) => {
-    return TicketModel.find({
-        user: userId
-    }).populate("event", "title date location");
+export const findTicketsByUserRepository = async (userId) => {
+    const tickets = await findTicketsByUserDAO(userId);
+    return tickets.map(ticket => new TicketDTO(ticket));
 };
 
-export const getTicketByIdRepository = (ticketId) => {
-    return TicketModel.findById(ticketId)
-        .populate("event", "title date location");
+export const getTicketByIdRepository = async (ticketId) => {
+    const ticket = await findTicketByIdDAO(ticketId);
+    return ticket ? new TicketDTO(ticket) : null;
 };
 
-export const cancelTicketRepository = (ticketId) => {
-
-    return TicketModel.findByIdAndUpdate(
-        ticketId,
-        {
-            status: "cancelled",
-            cancelledAt: new Date()
-        },
-        {
-            new: true
-        }
-    );
+export const findTicketsByEventRepository = async (eventId) => {
+    const tickets = await findTicketsByEventDAO(eventId);
+    return tickets.map(ticket => new TicketDTO(ticket));
 };
 
-export const findTicketsByEventRepository = (eventId) => {
-    return TicketModel.find({
-        event: eventId
-    }).populate("user", "first_name last_name email");
+export const countActiveTicketsRepository = (eventId) => {
+    return countActiveTicketsByEventDAO(eventId);
+};
+
+export const cancelTicketRepository = async (ticketId) => {
+    const ticket = await cancelTicketDAO(ticketId);
+    return ticket ? new TicketDTO(ticket) : null;
 };
