@@ -1,6 +1,6 @@
 export class EventDTO {
     constructor(event) {
-        this.id = event._id;
+        this.id = event._id?.toString() ?? event.id?.toString();
         this.title = event.title;
         this.description = event.description;
         this.category = event.category;

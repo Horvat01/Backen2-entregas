@@ -51,9 +51,9 @@ export const authorizeRole = (...allowedRoles) => {
             next();
 
         } catch (error) {
-
             return res.status(500).json({
-                error: error.toString()
+                status: "error",
+                message: "Error interno del servidor"
             });
         }
     };

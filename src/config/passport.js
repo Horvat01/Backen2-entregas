@@ -64,9 +64,7 @@ passport.use('register', new LocalStrategy(
 
 // LOGIN
 
-passport.use(
-    "login",
-    new LocalStrategy(
+passport.use("login",new LocalStrategy(
         {
             usernameField: "email",
             passwordField: "password",

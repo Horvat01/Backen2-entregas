@@ -1,12 +1,16 @@
-import app from './app.js'
-import { env } from './config/env.js'
-import {connectDB} from './config/database.js'
+import app from "./app.js";
+import { env } from "./config/env.js";
+import { connectDB } from "./config/database.js";
 
+const PORT = env.PORT || 3000;
 
+try {
+    await connectDB();
 
-await connectDB ()
-
-app.listen ( env.PORT, () => {
-    console.log(`Servidor escuchando peticiones en el Puerto: ${process.env.PORT}`);
-
-});
+    app.listen(PORT, () => {
+        console.log(`Servidor escuchando peticiones en el puerto: ${PORT}`);
+    });
+} catch (error) {
+    console.error("No se pudo iniciar el servidor");
+    process.exit(1);
+}

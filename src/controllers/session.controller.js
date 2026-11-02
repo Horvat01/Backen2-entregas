@@ -1,70 +1,21 @@
-// import UserModel from '../models/user.model.js';
-import { createHash } from '../utils/password.utils.js';
 import { generateToken } from '../utils/jwt.utils.js';
 import { env } from '../config/env.js';
-import { createUserRepository } from '../repositories/user.repository.js';
 import { UserDTO } from '../dto/users.dto.js';
 
-
-/**
- * 
- * @param {import('express').Request} req 
- * @param {import('express').Response} res 
- * @returns 
-*/
-
 export const current = async (req, res) => {
-    try {
-        return res.status(200).json({
-            status: 'success',
-            payload: {
-                id: req.user._id,
-                email: req.user.email,
-                role: req.user.role
-            }
-        });
-
-    } catch (error) {
-        return res.status(401).json({
-            status: 'error',
-            message: 'No autenticado'
-        });
-    }
+    return res.status(200).json({
+        status: 'success',
+        payload: new UserDTO(req.user)
+    });
 };
-
 
 export const register = async (req, res) => {
-    try {
-        const { first_name, last_name, email, password } = req.user;
-
-        const newUser = await createUserRepository({
-            first_name,
-            last_name,
-            email,
-            password: await createHash(password, 10),
-            role: 'user'
-        });
-
-        return res.status(201).json({
-            status: 'success',
-            message: 'Usuario registrado correctamente',
-            data: new UserDTO(newUser)
-        });
-    } catch (error) {
-        if (error.code === 11000) {
-            return res.status(409).json({
-                status: 'error',
-                message: 'El email ya está registrado'
-            });
-        }
-
-        return res.status(400).json({
-            status: 'error',
-            message: error.message
-        });
-    }
+    return res.status(201).json({
+        status: 'success',
+        message: 'Usuario registrado correctamente',
+        data: new UserDTO(req.user)
+    });
 };
-
 
 export const login = async (req, res) => {
     try {
@@ -80,7 +31,8 @@ export const login = async (req, res) => {
             httpOnly: true,
             maxAge: 3600000,
             sameSite: 'lax',
-            secure: env.NODE_ENV === 'production'
+            secure: env.NODE_ENV === 'production',
+            path: '/'
         });
 
         return res.status(200).json({
@@ -96,9 +48,13 @@ export const login = async (req, res) => {
     }
 };
 
-
 export const logout = async (req, res) => {
-    res.clearCookie('currentUser');
+    res.clearCookie('currentUser', {
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: env.NODE_ENV === 'production',
+        path: '/'
+    });
 
     return res.status(200).json({
         status: 'success',

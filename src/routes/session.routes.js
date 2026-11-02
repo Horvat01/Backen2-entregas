@@ -7,9 +7,8 @@ const loginUser = (req, res, next) => {
         if (err) {
             return res.status(500).json({
                 status: 'error',
-                message: 'Error interno al identificar el usuario',
-                info: err.toString()
-            })
+                message: 'Error interno al identificar el usuario'
+            });
         }
         if (!user) {
             const message = info?.message || 'datos inválidos';

@@ -55,7 +55,7 @@ export const createTicketService = async ({ eventId, quantity = 1, user }) => {
 
     // Crear ticket
     const ticket = await createTicketRepository({
-        user: user.id,
+        user: currentUserId,
         event: event.id,
         quantity,
         reservationCode,
