@@ -1,12 +1,5 @@
 import { EventDTO } from "../dto/event.dto.js";
-import {
-    createEventDAO,
-    findEventByIdDAO,
-    findEventsDAO,
-    countEventsDAO,
-    updateEventDAO,
-    updateEventStatusDAO
-} from "../dao/event.dao.js";
+import {createEventDAO,findEventByIdDAO,findEventsDAO,countEventsDAO,updateEventDAO,updateEventStatusDAO} from "../dao/event.dao.js";
 
 export const createEventRepository = async (eventData) => {
     const newEvent = await createEventDAO(eventData);

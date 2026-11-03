@@ -1,5 +1,4 @@
 import { createTicketDAO, findActiveTicketsByEventDAO, findTicketsByUserDAO, findTicketByIdDAO, findTicketsByEventDAO, countActiveTicketsByEventDAO, cancelTicketDAO } from "../dao/ticket.dao.js";
-
 import { TicketDTO } from "../dto/ticket.dto.js";
 
 export const createTicketRepository = async (data) => {
