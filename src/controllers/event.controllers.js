@@ -3,10 +3,10 @@ import { createEventService, getEventByIdService, findEventsService, updateEvent
 
 export const getEvents = async (req, res) => {
     try {
-        const { status, category, location, dateFrom, dateTo, page = 1, limit = 10, sort = "date"} = req.query;
+        const { status, category, location, dateFrom, dateTo, page = 1, limit = 10, sort = "date" } = req.query;
 
         const filters = {};
- 
+
         if (status) {
             filters.status = status;
         }
@@ -25,9 +25,10 @@ export const getEvents = async (req, res) => {
             if (dateFrom) {
                 filters.date.$gte = new Date(dateFrom);
             }
-
             if (dateTo) {
-                filters.date.$lte = new Date(dateTo);
+                const endDate = new Date(dateTo);
+                endDate.setUTCHours(23, 59, 59, 999);
+                filters.date.$lte = endDate;
             }
         }
 

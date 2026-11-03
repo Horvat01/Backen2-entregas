@@ -38,8 +38,13 @@ export const findEventsService = async ({
 
     const skip = (page - 1) * limit;
 
+    const stableSort = {
+        ...sort,
+        _id: sort._id ?? 1
+    };
+
     const [events, total] = await Promise.all([
-        findEventsRepository(filters, sort, skip, limit),
+        findEventsRepository(filters, stableSort, skip, limit),
         countEventsRepository(filters)
     ]);
 
